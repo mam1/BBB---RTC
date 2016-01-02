@@ -11,8 +11,17 @@
 #include <fcntl.h>
 //#include <time.h>
 
+
+#define I2C_BUSS 				"/dev/i2c-1"
+// #define PCF8583_WRITE_ADDRESS 	0xA0 
+// #define PCF8583_READ_ADDRESS  	0xA1
+
+#define PCF8583_WRITE_ADDRESS 	0x50 
+#define PCF8583_READ_ADDRESS  	0x51
+
 int file;
-char *filename = "/dev/i2c-1";
+char *filename = I2C_BUSS;
+
 struct tm
 {
   int	tm_sec;
@@ -26,25 +35,81 @@ struct tm
   int	tm_isdst;
 } rtc_time;
 
+//---------------------------------------------- 
+// This function converts an 8 bit binary value 
+// to an 8 bit BCD value. 
+// The input range must be from 0 to 99. 
 
+uint8_t  bin2bcd(uint8_t  value) 
+{ 
+char retval; 
 
-uint8_t bcd_to_decimal(uint8_t d)
-{
-    return ((d & 0x0F) + (((d & 0xF0) >> 4) * 10)); 
-}
+retval = 0; 
 
-int main(void) {
+while(1) 
+  { 
+   // Get the tens digit by doing multiple subtraction 
+   // of 10 from the binary value. 
+   if(value >= 10) 
+     { 
+      value -= 10; 
+      retval += 0x10; 
+     } 
+   else // Get the ones digit by adding the remainder. 
+     { 
+      retval += value; 
+      break; 
+     } 
+   } 
 
-	printf("\n\ni2c test program\n\n");
+return(retval); 
+} 
 
-	if((file = open(filename, O_RDWR)) < 0) {
+//---------------------------------------------- 
+// This function converts an 8 bit BCD value to 
+// an 8 bit binary value. 
+// The input range must be from 00 to 99. 
+
+char bcd2bin(char bcd_value) 
+{ 
+char temp; 
+
+temp = bcd_value; 
+
+// Shifting the upper digit right by 1 is 
+// the same as multiplying it by 8. 
+temp >>= 1; 
+
+// Isolate the bits for the upper digit. 
+temp &= 0x78; 
+
+// Now return: (Tens * 8) + (Tens * 2) + Ones 
+return(temp + (temp >> 2) + (bcd_value & 0x0f)); 
+
+} 
+
+//---------------------------------------------- 
+// This function opens an i2c buss.  
+//  
+
+void i2c_open(void){
+	char *bussname = I2C_BUSS;
+	if((file = open(bussname, O_RDWR)) < 0) {
 	    /* ERROR HANDLING: you can check errno to see what went wrong */
 	    perror("Failed to open the i2c bus");
 	    exit(1);
 	}
 
+	return;
+}
+
+
+int main(void) {
+
+	printf("\n\ni2c test program\n\n");
+	i2c_open();
 	printf("  i2c open worked\n");
-	int addr = 0x51;     // The I2C address of the device
+	int addr = PCF8583_READ_ADDRESS;     // The I2C address of the device
 	printf("i2c device addres set to %x\n",addr);
 	if (ioctl(file, I2C_SLAVE, addr) < 0) {
 	    printf("Failed to acquire bus access and/or talk to slave.\n");
@@ -63,21 +128,19 @@ int main(void) {
 	    printf("Failed to read from the i2c bus: %s.\n", strerror(errno));
 	    printf("\n\n");
 	    } 
-	 else 
-	  	printf("  read worked\n");
-	 for(i=0;i<10;i++)
-	 	printf("    byte %i <%2x>\n",i,buf[i]);
+	 else {
+	  	// printf("  read worked\n");
+	 // for(i=0;i<10;i++)
+	 // 	printf("    byte %i <%2x>\n",i,buf[i]);
 	
-	 rtc_time.tm_sec = bcd_to_decimal(buf[2] & 0x7f);
-  	 rtc_time.tm_min = bcd_to_decimal(buf[3] & 0x7f);
-  	 rtc_time.tm_hour = bcd_to_decimal(buf[4] & 0x3f);
-  	 rtc_time.tm_mday = bcd_to_decimal(buf[5] & 0x3f);
-  	 rtc_time.tm_mon = bcd_to_decimal(buf[7] & 0x1f) - 1;
-  	 rtc_time.tm_year = bcd_to_decimal(buf[8]) + 100;
-  	 rtc_time.tm_wday = bcd_to_decimal(buf[6] & 0x7f);
-
-
-	  	 printf("time %i:%i:%i   date %i/%i/%i   dow %i\n",
+		 rtc_time.tm_sec = bcd2bin(buf[2] & 0x7f);
+	  	 rtc_time.tm_min = bcd2bin(buf[3] & 0x7f);
+	  	 rtc_time.tm_hour = bcd2bin(buf[4] & 0x3f);
+	  	 rtc_time.tm_mday = bcd2bin(buf[5] & 0x3f);
+	  	 rtc_time.tm_mon = bcd2bin(buf[7] & 0x1f) - 1;
+	  	 rtc_time.tm_year = bcd2bin(buf[8]) + 100;
+	  	 rtc_time.tm_wday = bcd2bin(buf[6] & 0x3);
+	  	 printf("time %02i:%02i:%02i \t date %02i/%02i/%02i  \t dow %i\n",
 	  	 	rtc_time.tm_hour, 
 	  	 	rtc_time.tm_min, 
 	  	 	rtc_time.tm_sec, 
@@ -85,6 +148,8 @@ int main(void) {
 	  	 	rtc_time.tm_mon, 
 	  	 	rtc_time.tm_year, 
 	  	 	rtc_time.tm_wday);
-	  	 sleep(2);
+	  	 sleep(1);
 	}
+}
+	return 0;
 }
