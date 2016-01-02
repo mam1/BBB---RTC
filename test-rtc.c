@@ -56,7 +56,7 @@ int main(void) {
 	unsigned char buf[9] = {0};
 	int i;
 	 
-
+  for(i = 0; i<20; i++){
 	// Using I2C Read
 	if (read(file,buf,9) != 9) {
 	 	/* ERROR HANDLING: i2c transaction failed */
@@ -76,13 +76,15 @@ int main(void) {
   	 rtc_time.tm_year = bcd_to_decimal(buf[8]) + 100;
   	 rtc_time.tm_wday = bcd_to_decimal(buf[6] & 0x7f);
 
-  	 printf("time %i:%i:%i   date %i/%i/%i   dow %i\n",
-  	 	rtc_time.tm_hour, 
-  	 	rtc_time.tm_min, 
-  	 	rtc_time.tm_sec, 
-  	 	rtc_time.tm_mday, 
-  	 	rtc_time.tm_mon, 
-  	 	rtc_time.tm_year, 
-  	 	rtc_time.tm_wday);
 
+	  	 printf("time %i:%i:%i   date %i/%i/%i   dow %i\n",
+	  	 	rtc_time.tm_hour, 
+	  	 	rtc_time.tm_min, 
+	  	 	rtc_time.tm_sec, 
+	  	 	rtc_time.tm_mday, 
+	  	 	rtc_time.tm_mon, 
+	  	 	rtc_time.tm_year, 
+	  	 	rtc_time.tm_wday);
+	  	 sleep(2);
+	}
 }
