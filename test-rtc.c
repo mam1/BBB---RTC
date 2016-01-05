@@ -13,11 +13,7 @@
 
 
 #define I2C_BUSS 				"/dev/i2c-1"
-// #define PCF8583_WRITE_ADDRESS 	0xA0 
-// #define PCF8583_READ_ADDRESS  	0xA1
-
-#define PCF8583_WRITE_ADDRESS 	0x50 
-#define PCF8583_READ_ADDRESS  	0x51
+#define PCF8583_ADDRESS  		0x51
 
 int file;
 char *filename = I2C_BUSS;
@@ -109,7 +105,7 @@ int main(void) {
 	printf("\n\ni2c test program\n\n");
 	i2c_open();
 	printf("  i2c open worked\n");
-	int addr = PCF8583_READ_ADDRESS;     // The I2C address of the device
+	int addr = PCF8583_ADDRESS;     // The I2C address of the device
 	printf("i2c device addres set to %x\n",addr);
 	if (ioctl(file, I2C_SLAVE, addr) < 0) {
 	    printf("Failed to acquire bus access and/or talk to slave.\n");
