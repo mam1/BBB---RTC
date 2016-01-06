@@ -7,21 +7,22 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <string.h>
-
-//#include "myi2c.h"
-
+#include "myi2c.h"
 
 
-#define I2C_FILE_NAME "/dev/i2c-1"
+
+
 
 static int set_i2c_register(int file,
-                            unsigned char addr,
-                            unsigned char reg,
-                            unsigned char value) {
+                            uint8_t addr,
+                            uint8_t reg,
+                            uint8_t value) {
 
-    unsigned char outbuf[2];
+    uint8_t outbuf[2];
     struct i2c_rdwr_ioctl_data packets;
     struct i2c_msg messages[1];
+
+    printf("  *************** get_i2c_register called with file = %i, addr = %0x, reg = %0x, value = <%02x>\n",file, addr, reg, value);
 
     messages[0].addr  = addr;
     messages[0].flags = 0;
@@ -50,11 +51,11 @@ static int set_i2c_register(int file,
 }
 
 
-static int get_i2c_register(int file,
-                            unsigned char addr,
-                            unsigned char reg,
-                            unsigned char *val) {
-    unsigned char inbuf, outbuf;
+int get_i2c_register(int file,
+                            uint8_t addr,
+                            uint8_t reg,
+                            uint8_t *val) {
+    uint8_t inbuf, outbuf;
     struct i2c_rdwr_ioctl_data packets;
     struct i2c_msg messages[2];
 
