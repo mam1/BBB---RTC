@@ -29,20 +29,20 @@ typedef struct i2c_handle {
         int c_errno;
         char errmsg[96];
     } error;
-} i2c_t;
+} _i2c_t;
 
 /* Primary Functions */
-int i2c_open(i2c_t *i2c, const char *path);
-int i2c_transfer(i2c_t *i2c, struct i2c_msg *msgs, size_t count);
-int i2c_close(i2c_t *i2c);
+int i2c_open(_i2c_t *i2c, const char *path);
+int _i2c_transfer(_i2c_t *i2c, struct i2c_msg *msgs, size_t count);
+int i2c_close(_i2c_t *i2c);
 
 /* Miscellaneous */
-int i2c_fd(i2c_t *i2c);
-int i2c_tostring(i2c_t *i2c, char *str, size_t len);
+int i2c_fd(_i2c_t *i2c);
+int _i2c_tostring(_i2c_t *i2c, char *str, size_t len);
 
 /* Error Handling */
-int i2c_errno(i2c_t *i2c);
-const char *i2c_errmsg(i2c_t *i2c);
+int i2c_errno(_i2c_t *i2c);
+const char *i2c_errmsg(_i2c_t *i2c);
 
 /* struct i2c_msg from <linux/i2c.h>:
 
