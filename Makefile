@@ -1,5 +1,5 @@
 # scan directory 
-program_NAME := test-rtc
+program_NAME := test_i2c
 program_C_SRCS := $(wildcard *.c)
 program_CXX_SRCS := $(wildcard *.cpp)
 program_C_OBJS := ${program_C_SRCS:.c=.o}

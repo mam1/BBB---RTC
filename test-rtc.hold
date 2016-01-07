@@ -104,7 +104,7 @@ void i2c_open(void){
 }
 
 
-int main(void) {
+int xmain(void) {
 
 	printf("\n\ni2c test program\n\n");
 	i2c_open();
