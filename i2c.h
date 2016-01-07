@@ -25,7 +25,6 @@ enum i2c_error_code {
 
 typedef struct i2c_handle {
     int fd;
-
     struct {
         int c_errno;
         char errmsg[96];
