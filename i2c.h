@@ -44,7 +44,7 @@ int i2c_tostring(i2c_t *i2c, char *str, size_t len);
 int i2c_errno(i2c_t *i2c);
 const char *i2c_errmsg(i2c_t *i2c);
 
-/* struct i2c_msg from <linux/i2c.h>:
+ struct i2c_msg from <linux/i2c.h>:
 
     struct i2c_msg {
     	__u16 addr;
@@ -60,7 +60,7 @@ const char *i2c_errmsg(i2c_t *i2c);
     	__u16 len;
     	__u8 *buf;
     };
-*/
+
 
 #endif
 

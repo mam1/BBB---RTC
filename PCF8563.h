@@ -1,8 +1,14 @@
+
+#include "bitlit.h"
+
+
 #define PCF8583_ADDRESS     0x51
 #define SEC_REG             0x02
+#define SEC_MASK			b8(01111111)
 
-get_time(_tm *);
-set_time(_tm *);
+//
+
+
 
 typedef struct {
     int tm_sec;         /* seconds */
@@ -15,3 +21,8 @@ typedef struct {
     int tm_yday;        /* day in the year */
     int tm_isdst;       /* daylight saving time */
 } _tm ;
+
+
+int get_tm(_tm *);
+int set_tm(_tm *);
+int print_tm(_tm *);
