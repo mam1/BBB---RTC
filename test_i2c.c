@@ -3,10 +3,11 @@
 #include <stdint.h>
 
 #include "i2c.h"
+#include "PFC8563.h"
 
-#define PCF8583_ADDRESS     0x51
+
 #define I2C_BUSS            "/dev/i2c-1"
-#define SEC_REG             0x02
+
 
 int main(void) {
     i2c_t i2c;
@@ -16,6 +17,8 @@ int main(void) {
         fprintf(stderr, "i2c_open(): %s\n", i2c_errmsg(&i2c));
         exit(1);
     }
+
+    
 
     /* Read byte at address 0x100 of EEPROM */
     uint8_t msg_addr[2] = { PCF8583_ADDRESS, SEC_REG };

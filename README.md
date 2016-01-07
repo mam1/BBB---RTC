@@ -1,2 +1,2 @@
 # BBB---RTC
-Testing the RTC on the Waveshare Misc Cape
+Testing the PCF8563 RTC on the Waveshare Misc Cape.  Mounted on a Beaglebone black rev C.
