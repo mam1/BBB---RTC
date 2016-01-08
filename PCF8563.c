@@ -6,6 +6,8 @@
 #include "PCF8563.h"
 #include "i2c.h"
 
+uint8_t   reg_buf[8];
+
 //---------------------------------------------- 
 // This function converts an 8 bit binary value 
 // to an 8 bit BCD value. 
@@ -79,10 +81,41 @@ uint8_t get_byte(uint8_t reg, _tm *tm, _i2c_t *i2c){
 	return msg_data[0];
 }
 
-int get_tm(_tm *tm, _i2c_t *i2c){
-	
-	tm->tm_sec = bcd2bin(get_byte(SEC_REG,tm,i2c) & SEC_MASK);
-	tm->tm_min = 5; //bcd2bin(get_byte(MIN_REG,tm,i2c) & MIN_MASK);
+int *get_regs(uint8_t *reg_buf, _tm *tm, _i2c_t *i2c){
 
-	return 0;
+  /* Read byte at address 0x100 of EEPROM */
+    uint8_t msg_addr[2] = { PCF8583_ADDRESS, 0x02 };
+ //   uint8_t msg_data[1] = { 0x00, };
+    struct i2c_msg msgs[2] =
+        {
+            /* Write 16-bit address */
+            { .addr = PCF8583_ADDRESS, .flags = 0, .len = 2, .buf = msg_addr },
+            /* Read 8-bit data */
+            { .addr = PCF8583_ADDRESS, .flags = I2C_M_RD, .len = 8, .buf = reg_buf},
+        };
+
+    /* Transfer a transaction with two I2C messages */
+    if (_i2c_transfer(i2c, msgs, 2) < 0) {
+        fprintf(stderr, "_i2c_transfer(): %s\n", i2c_errmsg(i2c));
+        exit(1);
+    }
+
+  return 0;
+}
+
+
+int get_tm(_tm *tm, _i2c_t *i2c){
+
+  get_regs(reg_buf,tm,i2c);
+  
+  tm->tm_sec = bcd2bin(reg_buf[0] & SEC_MASK);
+  tm->tm_min = bcd2bin(reg_buf[1] & MIN_MASK);
+  tm->tm_hour = bcd2bin(reg_buf[2] & HOUR_MASK);
+  tm->tm_mday = bcd2bin(reg_buf[3] & DAY_MASK);
+  tm->tm_wday = bcd2bin(reg_buf[4] & WDAY_MASK);
+  tm->tm_mon = bcd2bin(reg_buf[5] & MON_MASK);
+  tm->tm_year = bcd2bin(reg_buf[6] & YEAR_MASK) + 2000;
+
+
+  return 0;
 }

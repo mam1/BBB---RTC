@@ -19,10 +19,11 @@ int main(void) {
         fprintf(stderr, "i2c_open(): %s\n", i2c_errmsg(&i2c));
         exit(1);
     }
-    for(i=0; i<20; i++){
+    for(i=0; i<10000; i++){
         get_tm(&tm,&i2c);
-        printf("  0:%02i:%02i  0/0/0  dow 0\n",tm.tm_min,tm.tm_sec);
-        sleep(2);
+        printf("  %02i:%02i:%02i  %02i/%02i/%02i  dow %i\n",
+            tm.tm_hour,tm.tm_min,tm.tm_sec,tm.tm_mon,tm.tm_mday,tm.tm_year,tm.tm_wday);
+        sleep(1);
     }
     i2c_close(&i2c);
     return 0;

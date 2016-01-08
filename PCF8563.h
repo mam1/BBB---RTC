@@ -8,6 +8,16 @@
 #define SEC_MASK            B8(01111111)
 #define MIN_REG             0x03
 #define MIN_MASK            B8(01111111)
+#define HOUR_REG            0x04
+#define HOUR_MASK           B8(00111111)
+#define DAY_REG             0x05
+#define DAY_MASK            B8(00111111)
+#define WDAY_REG            0x06
+#define WDAY_MASK           B8(00000111)
+#define MON_REG             0x07
+#define MON_MASK            B8(00001111)
+#define YEAR_REG            0x08
+#define YEAR_MASK           B8(11111111)
 
 typedef struct {
     int tm_sec;         /* seconds */
