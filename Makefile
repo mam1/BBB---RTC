@@ -1,5 +1,9 @@
 # scan directory 
+<<<<<<< HEAD
 program_NAME := second-test
+=======
+program_NAME := test_i2c
+>>>>>>> blockread
 program_C_SRCS := $(wildcard *.c)
 program_CXX_SRCS := $(wildcard *.cpp)
 program_C_OBJS := ${program_C_SRCS:.c=.o}

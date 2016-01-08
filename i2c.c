@@ -41,7 +41,9 @@ static int _i2c_error(struct i2c_handle *i2c, int code, int c_errno, const char 
     return code;
 }
 
-int i2c_open(i2c_t *i2c, const char *path) {
+
+int i2c_open(_i2c_t *i2c, const char *path) {
+
     uint32_t supported_funcs;
 
     memset(i2c, 0, sizeof(struct i2c_handle));
@@ -65,7 +67,9 @@ int i2c_open(i2c_t *i2c, const char *path) {
     return 0;
 }
 
-int i2c_transfer(i2c_t *i2c, struct i2c_msg *msgs, size_t count) {
+
+int _i2c_transfer(_i2c_t *i2c, struct i2c_msg *msgs, size_t count) {
+
     struct i2c_rdwr_ioctl_data i2c_rdwr_data;
 
     /* Prepare I2C transfer structure */
@@ -80,7 +84,9 @@ int i2c_transfer(i2c_t *i2c, struct i2c_msg *msgs, size_t count) {
     return 0;
 }
 
-int i2c_close(i2c_t *i2c) {
+
+int i2c_close(_i2c_t *i2c) {
+
     if (i2c->fd < 0)
         return 0;
 
@@ -93,19 +99,21 @@ int i2c_close(i2c_t *i2c) {
     return 0;
 }
 
-int i2c_tostring(i2c_t *i2c, char *str, size_t len) {
+
+int _i2c_tostring(_i2c_t *i2c, char *str, size_t len) {
     return snprintf(str, len, "I2C (fd=%d)", i2c->fd);
 }
 
-const char *i2c_errmsg(i2c_t *i2c) {
+const char *i2c_errmsg(_i2c_t *i2c) {
     return i2c->error.errmsg;
 }
 
-int i2c_errno(i2c_t *i2c) {
+int i2c_errno(_i2c_t *i2c) {
     return i2c->error.c_errno;
 }
 
-int i2c_fd(i2c_t *i2c) {
+int i2c_fd(_i2c_t *i2c) {
+
     return i2c->fd;
 }
 
