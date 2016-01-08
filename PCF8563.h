@@ -32,4 +32,6 @@ typedef struct {
 } _tm;
 
 uint8_t bcd2bin(uint8_t);
+uint8_t bin2bcd(uint8_t);
 int get_tm(_tm *, _i2c_t *);
+int set_tm(_tm *, _i2c_t *);
