@@ -7,8 +7,6 @@
 #include "i2c.h"
 #include "PCF8563.h"
 
-
-
 int main(void) {
     _i2c_t  i2c;
     _tm     tm;

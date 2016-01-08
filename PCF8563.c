@@ -60,6 +60,11 @@ temp &= 0x78;
 return(temp + (temp >> 2) + (bcd_value & 0x0f)); 
 }
 
+//---------------------------------------------- 
+// This function reads a byte of data from 
+// a PCF8563 register 
+ 
+
 uint8_t get_byte(uint8_t reg, _tm *tm, _i2c_t *i2c){
 
 	/* Read byte at address 0x100 of EEPROM */
@@ -80,6 +85,10 @@ uint8_t get_byte(uint8_t reg, _tm *tm, _i2c_t *i2c){
     }
 	return msg_data[0];
 }
+
+//---------------------------------------------- 
+// This function reads the PCF8563 data registers 
+// and loads the data into a buffer (reg_buf)
 
 int *get_regs(uint8_t *reg_buf, _tm *tm, _i2c_t *i2c){
 
@@ -103,6 +112,10 @@ int *get_regs(uint8_t *reg_buf, _tm *tm, _i2c_t *i2c){
   return 0;
 }
 
+//---------------------------------------------- 
+// This function loads the time date structure
+// from the register buffer.  It masks unwanted
+// bits and converts data from BCD to binary 
 
 int get_tm(_tm *tm, _i2c_t *i2c){
 
@@ -115,7 +128,6 @@ int get_tm(_tm *tm, _i2c_t *i2c){
   tm->tm_wday = bcd2bin(reg_buf[4] & WDAY_MASK);
   tm->tm_mon = bcd2bin(reg_buf[5] & MON_MASK);
   tm->tm_year = bcd2bin(reg_buf[6] & YEAR_MASK) + 2000;
-
 
   return 0;
 }
