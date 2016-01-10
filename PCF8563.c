@@ -6,7 +6,7 @@
 #include "PCF8563.h"
 #include "i2c.h"
 
-uint8_t   reg_buf[PCF8563_REGS];
+
 
 //---------------------------------------------- 
 // Convert an 8 bit binary value to an 8 bit BCD value
@@ -61,7 +61,6 @@ return(temp + (temp >> 2) + (bcd_value & 0x0f));
 
 uint8_t get_byte(uint8_t reg, _tm *tm, _i2c_t *i2c){
 
-	/* Read byte at address 0x100 of EEPROM */
     uint8_t msg_addr[2] = { PCF8583_ADDRESS, reg };
     uint8_t msg_data[1] = { 0x00, };
     struct i2c_msg msgs[2] =
@@ -81,18 +80,18 @@ uint8_t get_byte(uint8_t reg, _tm *tm, _i2c_t *i2c){
 }
 
 //---------------------------------------------- 
-// This function reads the PCF8563 data registers 
+// This function reads the PCF8563 time/date registers 
 // and loads the data into a buffer (reg_buf)
 
 int *get_regs(uint8_t *reg_buf, _tm *tm, _i2c_t *i2c){
 
-    uint8_t msg_addr[2] = { PCF8583_ADDRESS, 0x02 };
+    uint8_t msg_addr[2] = { PCF8583_ADDRESS, CNT_REG_1 };
     struct i2c_msg msgs[2] =
         {
             /* Write 16-bit address */
             { .addr = PCF8583_ADDRESS, .flags = 0, .len = 2, .buf = msg_addr },
             /* Read 8-bit data */
-            { .addr = PCF8583_ADDRESS, .flags = I2C_M_RD, .len = 8, .buf = reg_buf},
+            { .addr = PCF8583_ADDRESS, .flags = I2C_M_RD, .len = PCF8563_REGS - 2, .buf = reg_buf + 2},
         };
 
     /* Transfer a transaction with two I2C messages */
@@ -105,16 +104,16 @@ int *get_regs(uint8_t *reg_buf, _tm *tm, _i2c_t *i2c){
 }
 
 //---------------------------------------------- 
-// This function writes the PCF8563 data registers 
+// This function writes all the PCF8563 registers 
 int *set_regs(uint8_t *reg_buf, _tm *tm, _i2c_t *i2c){
 
-    uint8_t msg_addr[2] = { PCF8583_ADDRESS, 0x00 };
+    uint8_t msg_addr[2] = { PCF8583_ADDRESS, CNT_REG_1 };
     struct i2c_msg msgs[2] =
         {
             /* Write 16-bit address */
             { .addr = PCF8583_ADDRESS, .flags = 0, .len = 2, .buf = msg_addr },
             /* Write 8-bit data */
-            { .addr = PCF8583_ADDRESS, .flags = 0, .len = 15, .buf = reg_buf},
+            { .addr = PCF8583_ADDRESS, .flags = 0, .len = PCF8563_REGS, .buf = reg_buf},
         };
 
     /* Transfer a transaction with two I2C messages */
@@ -132,16 +131,17 @@ int *set_regs(uint8_t *reg_buf, _tm *tm, _i2c_t *i2c){
 // bits and converts data from BCD to binary 
 
 int get_tm(_tm *tm, _i2c_t *i2c){
+  uint8_t   reg_buf[PCF8563_REGS];
 
   get_regs(reg_buf,tm,i2c);
   
-  tm->tm_sec = bcd2bin(reg_buf[0] & SEC_MASK);
-  tm->tm_min = bcd2bin(reg_buf[1] & MIN_MASK);
-  tm->tm_hour = bcd2bin(reg_buf[2] & HOUR_MASK);
-  tm->tm_mday = bcd2bin(reg_buf[3] & DAY_MASK);
-  tm->tm_wday = bcd2bin(reg_buf[4] & WDAY_MASK);
-  tm->tm_mon = bcd2bin(reg_buf[5] & MON_MASK);
-  tm->tm_year = bcd2bin(reg_buf[6] & YEAR_MASK) + 2000;
+  tm->tm_sec = bcd2bin(reg_buf[SEC_REG] & SEC_MASK);
+  tm->tm_min = bcd2bin(reg_buf[MIN_REG] & MIN_MASK);
+  tm->tm_hour = bcd2bin(reg_buf[HOUR_REG] & HOUR_MASK);
+  tm->tm_mday = bcd2bin(reg_buf[DAY_REG] & DAY_MASK);
+  tm->tm_wday = bcd2bin(reg_buf[WDAY_REG] & WDAY_MASK);
+  tm->tm_mon = bcd2bin(reg_buf[MON_REG] & MON_MASK);
+  tm->tm_year = bcd2bin(reg_buf[YEAR_REG] & YEAR_MASK);
 
   return 0;
 }
@@ -151,16 +151,17 @@ int get_tm(_tm *tm, _i2c_t *i2c){
 // into the PCF8563.  
 
 int set_tm(_tm *tm, _i2c_t *i2c){
+  uint8_t   reg_buf[PCF8563_REGS];
 
   reg_buf[0] = CNT_REG_1;
   reg_buf[1] = CNT_REG_2;
-  reg_buf[2] = bin2bcd(tm->tm_sec & SEC_MASK);
-  reg_buf[3] = bin2bcd(tm->tm_min & MIN_MASK);
-  reg_buf[4] = bin2bcd(tm->tm_hour & HOUR_MASK);
-  reg_buf[5] = bin2bcd(tm->tm_mday  & DAY_MASK);
-  reg_buf[6] = bin2bcd(tm->tm_wday & WDAY_MASK);
-  reg_buf[7] = bin2bcd(tm->tm_mon & MON_MASK);
-  reg_buf[8] = bin2bcd((tm->tm_year - 2000)  & YEAR_MASK); 
+  reg_buf[SEC_REG] = bin2bcd(tm->tm_sec);     //  SEC_MASK);
+  reg_buf[MIN_REG] = bin2bcd(tm->tm_min);     //  MIN_MASK);
+  reg_buf[HOUR_REG] = bin2bcd(tm->tm_hour);     //  HOUR_MASK);
+  reg_buf[DAY_REG] = bin2bcd(tm->tm_mday );     //  DAY_MASK);
+  reg_buf[WDAY_REG] = bin2bcd(tm->tm_wday);     //  WDAY_MASK);
+  reg_buf[MON_REG] = bin2bcd(tm->tm_mon);     //  MON_MASK);
+  reg_buf[YEAR_REG] = bin2bcd((tm->tm_year) );     //  YEAR_MASK); 
   reg_buf[9] = ALM_REG_MIN;
   reg_buf[10] = ALM_REG_HOUR;
   reg_buf[11] = ALM_REG_DAY;
@@ -169,9 +170,7 @@ int set_tm(_tm *tm, _i2c_t *i2c){
   reg_buf[14] = TIMER_REG_1;
   reg_buf[15] = TIMER_REG_2;
 
-
   set_regs(reg_buf,tm,i2c);
-
 
   return 0;
 }

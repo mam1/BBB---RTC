@@ -10,7 +10,7 @@
 #define CNT_REG_1			B8(00000000)	// control/status1, no test modes or POR override
 #define CNT_REG_2			B8(00000000)	// control/status2, no alarm/timer flags and interrupts
 
-// time and date registers
+// time and date register addresses
 #define SEC_REG             0x02
 #define MIN_REG             0x03
 #define HOUR_REG            0x04
@@ -20,10 +20,10 @@
 #define YEAR_REG            0x08
 
 // alarm registers write values
-#define ALM_REG_1			B8(10000000)	// minute alarm values reset to 00
-#define ALM_REG_2			B8(10000000)	// hour alarm values reset to 00
-#define ALM_REG_3			B8(10000000)	// day alarm values reset to 00
-#define ALM_REG_4			B8(10000000)	// week day alarm values reset to 00
+#define ALM_REG_MIN			B8(10000000)	// minute alarm values reset to 00
+#define ALM_REG_HOUR		B8(10000000)	// hour alarm values reset to 00
+#define ALM_REG_DAY			B8(10000000)	// day alarm values reset to 00
+#define ALM_REG_WDAY		B8(10000000)	// week day alarm values reset to 00
 
 // CLKOUT control register
 #define CLKOUT_REG			B8(00000000)	// CLKOUT outputs inhibited
@@ -32,8 +32,7 @@
 #define TIMER_REG_1			B8(00000000)	// timer swwiteched off
 #define TIMER_REG_2			B8(00000000)	// no timer value
 
-
-
+// register masks
 #define SEC_MASK            B8(01111111)
 #define MIN_MASK            B8(01111111)
 #define HOUR_MASK           B8(00111111)
@@ -42,7 +41,7 @@
 #define WDAY_MASK           B8(00000111)
 #define MON_MASK            B8(00001111)
 #define YEAR_MASK           B8(11111111)
-
+#define CENTRY_MASK			B8(10000000);
 
 typedef struct {
     int tm_sec;         /* seconds */
