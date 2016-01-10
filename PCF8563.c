@@ -152,8 +152,8 @@ int get_tm(_tm *tm, _i2c_t *i2c){
 
 int set_tm(_tm *tm, _i2c_t *i2c){
 
-  reg_buf[0] = 0;
-  reg_buf[1] = 0;
+  reg_buf[0] = CNT_REG_1;
+  reg_buf[1] = CNT_REG_2;
   reg_buf[2] = bin2bcd(tm->tm_sec & SEC_MASK);
   reg_buf[3] = bin2bcd(tm->tm_min & MIN_MASK);
   reg_buf[4] = bin2bcd(tm->tm_hour & HOUR_MASK);
@@ -161,12 +161,13 @@ int set_tm(_tm *tm, _i2c_t *i2c){
   reg_buf[6] = bin2bcd(tm->tm_wday & WDAY_MASK);
   reg_buf[7] = bin2bcd(tm->tm_mon & MON_MASK);
   reg_buf[8] = bin2bcd((tm->tm_year - 2000)  & YEAR_MASK); 
-  reg_buf[9] = 0x80;
-  reg_buf[10] = 0x80;
-  reg_buf[11] = 0x80;
-  reg_buf[12] = 0x80;
-  reg_buf[13] = 0;
-  reg_buf[14] = 0;
+  reg_buf[9] = ALM_REG_MIN;
+  reg_buf[10] = ALM_REG_HOUR;
+  reg_buf[11] = ALM_REG_DAY;
+  reg_buf[12] = ALM_REG_WDAY;
+  reg_buf[13] = CLKOUT_REG;
+  reg_buf[14] = TIMER_REG_1;
+  reg_buf[15] = TIMER_REG_2;
 
 
   set_regs(reg_buf,tm,i2c);
