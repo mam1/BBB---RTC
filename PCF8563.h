@@ -4,6 +4,9 @@
 
 #define PCF8583_ADDRESS     0x51
 #define I2C_BUSS            "/dev/i2c-1"
+#define PCF8563_REGS		0x0f
+
+
 #define SEC_REG             0x02
 #define SEC_MASK            B8(01111111)
 #define MIN_REG             0x03
@@ -31,5 +34,5 @@ typedef struct {
     int tm_isdst;       /* daylight saving time */
 } _tm;
 
-uint8_t bcd2bin(uint8_t);
 int get_tm(_tm *, _i2c_t *);
+int set_tm(_tm *, _i2c_t *);
