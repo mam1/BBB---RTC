@@ -56,6 +56,6 @@ typedef struct {
 } _tm;
 
 
-
-int get_tm(_tm *, _i2c_t *);
-int set_tm(_tm *, _i2c_t *);
+int open_tm(char *filename, uint8_t addr);
+int get_tm(int, _tm *, _i2c_t *);
+int set_tm(int, _tm *, _i2c_t *);
