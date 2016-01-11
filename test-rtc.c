@@ -23,7 +23,9 @@ int file;
 char *filename = I2C_BUSS;
 uint8_t buf[16];
 
-struct tm
+
+
+typedef struct 
 {
   int	tm_sec;
   int	tm_min;
@@ -34,7 +36,9 @@ struct tm
   int	tm_wday;
   int	tm_yday;
   int	tm_isdst;
-} rtc_time;
+} _tm;
+
+_tm rtc_time;
 
 //---------------------------------------------- 
 // This function converts an 8 bit binary value 
@@ -89,20 +93,19 @@ return(temp + (temp >> 2) + (bcd_value & 0x0f));
 
 } 
 
-//---------------------------------------------- 
-// This function opens an i2c buss.  
-//  
+void pdate(_tm *rtc_time){
 
-void i2c_open(void){
-	char *bussname = I2C_BUSS;
-	if((file = open(bussname, O_RDWR)) < 0) {
-	    /* ERROR HANDLING: you can check errno to see what went wrong */
-	    perror("Failed to open the i2c bus");
-	    exit(1);
-	}
-
+printf("time %02i:%02i:%02i \t date %02i/%02i/%02i  \t dow %i\n",
+	 	rtc_time->tm_hour, 
+	 	rtc_time->tm_min, 
+	 	rtc_time->tm_sec,  
+	 	rtc_time->tm_mon,
+	 	rtc_time->tm_mday, 
+	 	rtc_time->tm_year, 
+	 	rtc_time->tm_wday);
 	return;
 }
+
 
 
 int main(void) {
@@ -154,19 +157,12 @@ int main(void) {
 		  	rtc_time.tm_min = bcd2bin(buf[1] & 0x7f);
 		  	rtc_time.tm_hour = bcd2bin(buf[2] & 0x3f);
 		  	rtc_time.tm_mday = bcd2bin(buf[3] & 0x3f);
-		  	rtc_time.tm_mon = bcd2bin(buf[4] & 0x1f) - 1;
-		  	rtc_time.tm_year = bcd2bin(buf[5]) + 100;
-		  	rtc_time.tm_wday = bcd2bin(buf[6] & 0x3);
+		  	rtc_time.tm_wday = bcd2bin(buf[4] & 0x3);
+		  	rtc_time.tm_mon = bcd2bin(buf[5] & 0x0f);
+		  	rtc_time.tm_year = bcd2bin(buf[6]);
 
-		  	printf("    time %02i:%02i:%02i \t date %02i/%02i/%02i  \t dow %i\n",
-		  	 	rtc_time.tm_hour, 
-		  	 	rtc_time.tm_min, 
-		  	 	rtc_time.tm_sec, 
-		  	 	rtc_time.tm_mday, 
-		  	 	rtc_time.tm_mon, 
-		  	 	rtc_time.tm_year, 
-		  	 	rtc_time.tm_wday);
-		  	sleep(1);
+
+			pdate(&rtc_time);
 		}
 	}
 
@@ -179,26 +175,12 @@ int main(void) {
   	rtc_time.tm_wday = 4;
 
 	printf("  set time to: ");
-  	printf("time %02i:%02i:%02i \t date %02i/%02i/%02i  \t dow %i\n",
-	 	rtc_time.tm_hour, 
-	 	rtc_time.tm_min, 
-	 	rtc_time.tm_sec, 
-	 	rtc_time.tm_mday, 
-	 	rtc_time.tm_mon, 
-	 	rtc_time.tm_year, 
-	 	rtc_time.tm_wday);
+  	pdate(&rtc_time);
 
   //unsigned char reg = 0x10; // Device register to access
 //buf[0] = reg;
 
 buf[0] = 0x02;
-// if (write(file,buf,1) != 1) {
-//     /* ERROR HANDLING: i2c transaction failed */
-//     printf("Failed to write to the i2c bus.\n");
-//     // buff = g_strerror(errno);
-//     // printf(buffer);
-//     printf("\n\n");
-// }
 
 buf[1] = bin2bcd(rtc_time.tm_sec);
 buf[2] = bin2bcd(rtc_time.tm_min);
@@ -237,19 +219,13 @@ printf("  set worked\n");
 			rtc_time.tm_sec = bcd2bin(buf[0] & 0x7f);
 		  	rtc_time.tm_min = bcd2bin(buf[1] & 0x7f);
 		  	rtc_time.tm_hour = bcd2bin(buf[2] & 0x3f);
+
 		  	rtc_time.tm_mday = bcd2bin(buf[3] & 0x3f);
-		  	rtc_time.tm_mon = bcd2bin(buf[4] & 0x1f) - 1;
-		  	rtc_time.tm_year = bcd2bin(buf[5]) + 100;
+		  	rtc_time.tm_mon = bcd2bin(buf[4] & 0x1f);
+		  	rtc_time.tm_year = bcd2bin(buf[5]);
 		  	rtc_time.tm_wday = bcd2bin(buf[6] & 0x3);
 
-		  	printf("    time %02i:%02i:%02i \t date %02i/%02i/%02i  \t dow %i\n",
-		  	 	rtc_time.tm_hour, 
-		  	 	rtc_time.tm_min, 
-		  	 	rtc_time.tm_sec, 
-		  	 	rtc_time.tm_mday, 
-		  	 	rtc_time.tm_mon, 
-		  	 	rtc_time.tm_year, 
-		  	 	rtc_time.tm_wday);
+			pdate(&rtc_time);
 		  	sleep(1);
 		}
 	}
