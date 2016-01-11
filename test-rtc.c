@@ -205,9 +205,11 @@ buf[2] = bin2bcd(rtc_time.tm_min);
 buf[3] = bin2bcd(rtc_time.tm_hour);
 
 buf[4] = bin2bcd(rtc_time.tm_mday);
+buf[5] = bin2bcd(rtc_time.tm_wday);
+
 buf[6] = bin2bcd(rtc_time.tm_mon);
 buf[7] = bin2bcd(rtc_time.tm_year);
-buf[5] = bin2bcd(rtc_time.tm_wday);
+
 
 if(write(file,buf,8) != 8){
     printf("Failed to write to the i2c bus.\n");
