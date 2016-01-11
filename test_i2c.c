@@ -24,8 +24,8 @@ int main(void) {
     tm.tm_hour = 23;
     tm.tm_min = 59;
     tm.tm_sec = 55;
-    tm.tm_mon = 5;
-    tm.tm_mday = 23;
+    tm.tm_mon = 7;
+    tm.tm_mday = 31;
     tm.tm_year = 16;
     tm.tm_wday = 4;
     printf("\n setting rtc to:  %02i:%02i:%02i  %02i/%02i/%02i  dow %i\n",
