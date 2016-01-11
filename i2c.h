@@ -34,6 +34,7 @@ typedef struct i2c_handle {
 /* Primary Functions */
 int i2c_open(_i2c_t *i2c, const char *path);
 int _i2c_transfer(_i2c_t *i2c, struct i2c_msg *msgs, size_t count);
+int _i2c_master_send(_i2c_t *i2c, uint8_t data[], int size);
 int i2c_close(_i2c_t *i2c);
 
 /* Miscellaneous */

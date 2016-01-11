@@ -80,6 +80,14 @@ int _i2c_transfer(_i2c_t *i2c, struct i2c_msg *msgs, size_t count) {
     return 0;
 }
 
+int _i2c_master_send(_i2c_t *i2c, uint8_t data[], int size){
+
+    printf("*** size of data = %i\n",size);
+
+
+    return 0;
+}
+
 int i2c_close(_i2c_t *i2c) {
     if (i2c->fd < 0)
         return 0;

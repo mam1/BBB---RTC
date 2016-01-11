@@ -55,5 +55,7 @@ typedef struct {
     int tm_isdst;       /* daylight saving time */
 } _tm;
 
+
+
 int get_tm(_tm *, _i2c_t *);
 int set_tm(_tm *, _i2c_t *);

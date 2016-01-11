@@ -12,11 +12,18 @@ int main(void) {
     _tm         tm;
     int         i;
 
+
+
     /* Open the i2c-0 bus */
     if (i2c_open(&i2c, I2C_BUSS) < 0) {
         fprintf(stderr, "i2c_open(): %s\n", i2c_errmsg(&i2c));
         exit(1);
     }
+
+
+    uint8_t  b[4] = {1,2,3,4};
+
+    _i2c_master_send(&i2c, b, sizeof(b));
 
     tm.tm_hour = 59;
     tm.tm_min = 10;
