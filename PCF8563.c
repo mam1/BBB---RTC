@@ -111,9 +111,9 @@ int *set_regs(uint8_t *reg_buf, _tm *tm, _i2c_t *i2c){
     struct i2c_msg msgs[2] =
         {
             /* Write 16-bit address */
-            { .addr = PCF8583_ADDRESS, .flags = 0, .len = 2, .buf = msg_addr },
+            { .addr = PCF8583_ADDRESS, .flags = 0, .len = 1, .buf = msg_addr },
             /* Write 8-bit data */
-            { .addr = PCF8583_ADDRESS, .flags = 0, .len = PCF8563_REGS, .buf = reg_buf},
+            { .addr = SEC_REG, .flags = 0, .len = PCF8563_REGS, .buf = reg_buf},
         };
 
     /* Transfer a transaction with two I2C messages */

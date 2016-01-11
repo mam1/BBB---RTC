@@ -28,7 +28,7 @@ int main(void) {
     printf("\n setting clock to:  %02i:%02i:%02i  %02i/%02i/%02i  dow %i\n",
     tm.tm_hour,tm.tm_min,tm.tm_sec,tm.tm_mon,tm.tm_mday,tm.tm_year,tm.tm_wday);
     set_tm(&tm,&i2c);
-    sleep(10);
+    // sleep(10);
 
     for(i=0; i<120; i++){
         get_tm(&tm,&i2c);
