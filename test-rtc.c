@@ -108,8 +108,7 @@ printf("time %02i:%02i:%02i \t date %02i/%02i/%02i  \t dow %i\n",
 
 
 
-int xmain(void) {
-
+int main(void) {
 
 
 
