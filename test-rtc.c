@@ -106,50 +106,63 @@ void i2c_open(void){
 
 int main(void) {
 
-	printf("\n\ni2c test program\n\n");
-	i2c_open();
+	printf("\n\n*** i2c test program ***\n\n");
+	int file;
+	char *filename = "/dev/i2c-1";
+	if ((file = open(filename, O_RDWR)) < 0) {
+	    /* ERROR HANDLING: you can check errno to see what went wrong */
+	    perror("Failed to open the i2c bus");
+	    exit(1);
+	}
 	printf("  i2c open worked\n");
 	int addr = PCF8583_READ_ADDRESS;     // The I2C address of the device
-	printf("i2c device addres set to %x\n",addr);
+	printf("  i2c device addres set to %x\n",addr);
 	if (ioctl(file, I2C_SLAVE, addr) < 0) {
 	    printf("Failed to acquire bus access and/or talk to slave.\n");
 	    /* ERROR HANDLING; you can check errno to see what went wrong */
 	    exit(1);
 	}
-	printf("  communication initiated\nstart read\n");
+	printf("  communication initiated\n  start read\n");
 
 	unsigned char buf[9] = {0};
+	unsigned char rbuf[1] = {0x02};
 	int i;
+	// char	buffer[100];
 	 
-  for(i = 0; i<20; i++){
-	// Using I2C Read
-	if (read(file,buf,9) != 9) {
-	 	/* ERROR HANDLING: i2c transaction failed */
-	    printf("Failed to read from the i2c bus: %s.\n", strerror(errno));
-	    printf("\n\n");
-	    } 
-	 else {
-	  	// printf("  read worked\n");
-	 // for(i=0;i<10;i++)
-	 // 	printf("    byte %i <%2x>\n",i,buf[i]);
-	
-		 rtc_time.tm_sec = bcd2bin(buf[2] & 0x7f);
-	  	 rtc_time.tm_min = bcd2bin(buf[3] & 0x7f);
-	  	 rtc_time.tm_hour = bcd2bin(buf[4] & 0x3f);
-	  	 rtc_time.tm_mday = bcd2bin(buf[5] & 0x3f);
-	  	 rtc_time.tm_mon = bcd2bin(buf[7] & 0x1f) - 1;
-	  	 rtc_time.tm_year = bcd2bin(buf[8]) + 100;
-	  	 rtc_time.tm_wday = bcd2bin(buf[6] & 0x3);
-	  	 printf("time %02i:%02i:%02i \t date %02i/%02i/%02i  \t dow %i\n",
-	  	 	rtc_time.tm_hour, 
-	  	 	rtc_time.tm_min, 
-	  	 	rtc_time.tm_sec, 
-	  	 	rtc_time.tm_mday, 
-	  	 	rtc_time.tm_mon, 
-	  	 	rtc_time.tm_year, 
-	  	 	rtc_time.tm_wday);
-	  	 sleep(1);
+  	for(i = 0; i<20; i++){
+	  	if (write(file,rbuf,1) != 1) {
+		    /* ERROR HANDLING: i2c transaction failed */
+		    printf("Failed to write to the i2c bus.\n");
+		    // buffer = g_strerror(errno);
+		    // printf(buffer);
+		    printf("\n\n");
+		}
+		printf("  register addres set to %i\n",rbuf[0]);
+
+		if (read(file,buf,9) != 9) {
+		 	/* ERROR HANDLING: i2c transaction failed */
+		    printf("Failed to read from the i2c bus: %s.\n", strerror(errno));
+		    printf("\n\n");
+		} 
+		else {
+			rtc_time.tm_sec = bcd2bin(buf[0] & 0x7f);
+		  	rtc_time.tm_min = bcd2bin(buf[1] & 0x7f);
+		  	rtc_time.tm_hour = bcd2bin(buf[2] & 0x3f);
+		  	rtc_time.tm_mday = bcd2bin(buf[3] & 0x3f);
+		  	rtc_time.tm_mon = bcd2bin(buf[4] & 0x1f) - 1;
+		  	rtc_time.tm_year = bcd2bin(buf[5]) + 100;
+		  	rtc_time.tm_wday = bcd2bin(buf[6] & 0x3);
+
+		  	printf("time %02i:%02i:%02i \t date %02i/%02i/%02i  \t dow %i\n",
+		  	 	rtc_time.tm_hour, 
+		  	 	rtc_time.tm_min, 
+		  	 	rtc_time.tm_sec, 
+		  	 	rtc_time.tm_mday, 
+		  	 	rtc_time.tm_mon, 
+		  	 	rtc_time.tm_year, 
+		  	 	rtc_time.tm_wday);
+		  	sleep(1);
+		}
 	}
-}
 	return 0;
 }
