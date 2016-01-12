@@ -4,11 +4,11 @@
 #include <unistd.h>     //sleep
 #include "bitlit.h"
 
-#include "i2c.h"
+// #include "i2c.h"
 #include "PCF8563.h"
 
 int main(void) {
-    _i2c_t      i2c;
+    // _i2c_t      i2c;
     _tm         tm;
     int         i;
 
@@ -30,16 +30,16 @@ int main(void) {
     tm.tm_wday = 1;
     printf("\n  setting rtc to:   %02i:%02i:%02i  %02i/%02i/%02i  dow %i\n",
     tm.tm_hour,tm.tm_min,tm.tm_sec,tm.tm_mon,tm.tm_mday,tm.tm_year,tm.tm_wday);
-    set_tm(rtc,&tm,&i2c);
+    set_tm(rtc,&tm);
     // sleep(10);
 
     for(i=0; i<120; i++){
-        get_tm(rtc,&tm,&i2c);
+        get_tm(rtc,&tm);
         sleep(1);
         printf("         after set  %02i:%02i:%02i  %02i/%02i/%02i  dow %i\n",
             tm.tm_hour,tm.tm_min,tm.tm_sec,tm.tm_mon,tm.tm_mday,tm.tm_year,tm.tm_wday);
   
     }
-    i2c_close(&i2c);
+    close(rtc);
     return 0;
 }

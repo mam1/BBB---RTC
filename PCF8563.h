@@ -1,5 +1,5 @@
 
-#include "i2c.h"
+// #include "i2c.h"
 #include "bitlit.h"
 
 #define PCF8583_ADDRESS     0x51			// PCF8563 device address (8 bit)
@@ -57,5 +57,5 @@ typedef struct {
 
 
 int open_tm(char *filename, uint8_t addr);
-int get_tm(int, _tm *, _i2c_t *);
-int set_tm(int, _tm *, _i2c_t *);
+int get_tm(int, _tm *);
+int set_tm(int, _tm *);

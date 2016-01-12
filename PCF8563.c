@@ -5,7 +5,6 @@
  */
 
 #include <errno.h>
-#include <stdint.h>		//uint_8, uint_16, uint_32, etc.
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -18,9 +17,6 @@
 #include <stdint.h>   //uint_8, uint_16, uint_32, etc.
 
 #include "PCF8563.h"
-#include "i2c.h"
-
-int c_polarity; /* 0: MO_C=1 means 19xx, otherwise MO_C=1 means 20xx */
 
 //---------------------------------------------- 
 // Convert an 8 bit binary value to an 8 bit BCD value
@@ -29,7 +25,6 @@ static uint8_t  bin2bcd(uint8_t  value)
 char retval; 
 
 retval = 0; 
-
 while(1) 
   { 
    // Get the tens digit by doing multiple subtraction 
@@ -78,32 +73,26 @@ int open_tm(char *filename, uint8_t addr){
       perror("Failed to open the i2c bus");
       exit(1);
   }
-  printf("  i2c open worked\n");
 
-  printf("  i2c device addres set to %x\n",addr);
   if (ioctl(fn, I2C_SLAVE, addr) < 0) {
       printf("Failed to acquire bus access and/or talk to slave.\n");
       /* ERROR HANDLING; you can check errno to see what went wrong */
       exit(1);
   }
-  printf("  communication initiated\n  start read\n");
-
   return fn;
 }
 
 //---------------------------------------------- 
 // This function loads the time date structure
 // from the PCF8563 register buffer
-int get_tm(int rtc, _tm *tm, _i2c_t *i2c){
+int get_tm(int rtc, _tm *tm){
   uint8_t   reg_buf[PCF8563_REGS];
 
-  // select register
+  // select register to start read
   reg_buf[0] = SEC_REG;
   if (write(rtc,reg_buf,1) != 1) {
     /* ERROR HANDLING: i2c transaction failed */
     printf("Failed to write to the i2c bus.\n");
-    // buffer = g_strerror(errno);
-    // printf(buffer);
     printf("\n\n");
   }
   // read registers
@@ -120,12 +109,6 @@ int get_tm(int rtc, _tm *tm, _i2c_t *i2c){
     tm->tm_wday = reg_buf[4] & 0x7;
     tm->tm_mon = bcd2bin(reg_buf[5] & 0x0f) - 1; /* rtc mn 1-12 */
     tm->tm_year = bcd2bin(reg_buf[6]) + 2000;
-    // if (tm->tm_year < 70)
-    // tm->tm_year += 100;   /* assume we are in 1970...2069 */
-
-    /* detect the polarity heuristically. see note above. */
-    // c_polarity = (reg_buf[MON_REG] & CENTRY_MASK) ?
-    //   (tm->tm_year >= 100) : (tm->tm_year < 100);
   }
   return 0;
 
@@ -136,25 +119,20 @@ int get_tm(int rtc, _tm *tm, _i2c_t *i2c){
 // This function loads the values in the date structure
 // into the PCF8563.  
 
-int set_tm(int rtc,_tm *tm, _i2c_t *i2c){
+int set_tm(int rtc,_tm *tm){
   uint8_t   reg_buf[PCF8563_REGS];
 
-  reg_buf[0] = SEC_REG;
-
+  /* start register */
+  reg_buf[0] = SEC_REG;               
+  /* time date registers */
   reg_buf[1] = bin2bcd(tm->tm_sec);
   reg_buf[2] = bin2bcd(tm->tm_min);
   reg_buf[3] = bin2bcd(tm->tm_hour);
-
   reg_buf[4] = bin2bcd(tm->tm_mday);
   reg_buf[5] = tm->tm_wday & 0x07;
-
   reg_buf[6] = bin2bcd(tm->tm_mon + 1);
-
   reg_buf[7] = bin2bcd(tm->tm_year - 2000);
-  // if (c_polarity ? (tm->tm_year >= 100) : (tm->tm_year < 100))
-  //   reg_buf[MON_REG] |= CENTRY_MASK;
-
-
+  /* the buffer to the PCF8563 */
   if(write(rtc,reg_buf,8) != 8){
       printf("Failed to write to the i2c bus.\n");
     printf("\n\n");
