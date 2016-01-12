@@ -41,7 +41,7 @@
 #define WDAY_MASK           B8(00000111)
 #define MON_MASK            B8(00001111)
 #define YEAR_MASK           B8(11111111)
-#define CENTRY_MASK			B8(10000000);
+#define CENTRY_MASK			B8(10000000)
 
 typedef struct {
     int tm_sec;         /* seconds */

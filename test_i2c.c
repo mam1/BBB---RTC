@@ -24,11 +24,11 @@ int main(void) {
     tm.tm_hour = 23;
     tm.tm_min = 59;
     tm.tm_sec = 55;
-    tm.tm_mon = 7;
-    tm.tm_mday = 31;
-    tm.tm_year = 16;
-    tm.tm_wday = 4;
-    printf("\n setting rtc to:  %02i:%02i:%02i  %02i/%02i/%02i  dow %i\n",
+    tm.tm_mon = 1;
+    tm.tm_mday = 11;
+    tm.tm_year = 2018;
+    tm.tm_wday = 2;
+    printf("\n  setting rtc to:   %02i:%02i:%02i  %02i/%02i/%02i  dow %i\n",
     tm.tm_hour,tm.tm_min,tm.tm_sec,tm.tm_mon,tm.tm_mday,tm.tm_year,tm.tm_wday);
     set_tm(rtc,&tm,&i2c);
     // sleep(10);
