@@ -117,15 +117,15 @@ int get_tm(int rtc, _tm *tm, _i2c_t *i2c){
     tm->tm_min = bcd2bin(reg_buf[1] & 0x7f);
     tm->tm_hour = bcd2bin(reg_buf[2] & 0x3f);
     tm->tm_mday = bcd2bin(reg_buf[3] & 0x3f);
-    tm->tm_wday = bcd2bin(reg_buf[4] & 0x3);
-    tm->tm_mon = bcd2bin(reg_buf[5] & 0x0f)- 1; /* rtc mn 1-12 */
-    tm->tm_year = bcd2bin(reg_buf[6]);
-    if (tm->tm_year < 70)
-    tm->tm_year += 100;   /* assume we are in 1970...2069 */
+    tm->tm_wday = reg_buf[4] & 0x7;
+    tm->tm_mon = bcd2bin(reg_buf[5] & 0x0f) - 1; /* rtc mn 1-12 */
+    tm->tm_year = bcd2bin(reg_buf[6]) + 2000;
+    // if (tm->tm_year < 70)
+    // tm->tm_year += 100;   /* assume we are in 1970...2069 */
 
     /* detect the polarity heuristically. see note above. */
-    c_polarity = (reg_buf[MON_REG] & CENTRY_MASK) ?
-      (tm->tm_year >= 100) : (tm->tm_year < 100);
+    // c_polarity = (reg_buf[MON_REG] & CENTRY_MASK) ?
+    //   (tm->tm_year >= 100) : (tm->tm_year < 100);
   }
   return 0;
 
@@ -146,13 +146,13 @@ int set_tm(int rtc,_tm *tm, _i2c_t *i2c){
   reg_buf[3] = bin2bcd(tm->tm_hour);
 
   reg_buf[4] = bin2bcd(tm->tm_mday);
-  reg_buf[5] = bin2bcd(tm->tm_wday);
+  reg_buf[5] = tm->tm_wday & 0x07;
 
   reg_buf[6] = bin2bcd(tm->tm_mon + 1);
 
-  reg_buf[7] = bin2bcd(tm->tm_year % 100);
-  if (c_polarity ? (tm->tm_year >= 100) : (tm->tm_year < 100))
-    reg_buf[MON_REG] |= CENTRY_MASK;
+  reg_buf[7] = bin2bcd(tm->tm_year - 2000);
+  // if (c_polarity ? (tm->tm_year >= 100) : (tm->tm_year < 100))
+  //   reg_buf[MON_REG] |= CENTRY_MASK;
 
 
   if(write(rtc,reg_buf,8) != 8){

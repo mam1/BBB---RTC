@@ -19,15 +19,15 @@ int main(void) {
     /* Open the i2c-0 bus */
      rtc = open_tm(I2C_BUSS, PCF8583_ADDRESS);
 
-    uint8_t  b[4] = {1,2,3,4};
+    // uint8_t  b[4] = {1,2,3,4};
 
     tm.tm_hour = 23;
     tm.tm_min = 59;
     tm.tm_sec = 55;
-    tm.tm_mon = 1;
-    tm.tm_mday = 11;
-    tm.tm_year = 2018;
-    tm.tm_wday = 2;
+    tm.tm_mon = 11;
+    tm.tm_mday = 31;
+    tm.tm_year = 2010;
+    tm.tm_wday = 1;
     printf("\n  setting rtc to:   %02i:%02i:%02i  %02i/%02i/%02i  dow %i\n",
     tm.tm_hour,tm.tm_min,tm.tm_sec,tm.tm_mon,tm.tm_mday,tm.tm_year,tm.tm_wday);
     set_tm(rtc,&tm,&i2c);
