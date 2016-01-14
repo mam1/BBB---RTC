@@ -158,11 +158,16 @@ int test_alm(int rtc){
     printf("\n\n");
     return 0;
     } 
-  else 
-    if(reg_buf[0] & B8(00001000))
+  else{
+    printf("con reg 1 read <%02x>\n",reg_buf[0]);
+    printf("con reg 1 read <%02x>\n",(reg_buf[0] & B8(00001000)));
+    if(reg_buf[0] & B8(00001000)){
+
       return 1;
+    }
     else
       return 0;
+  }
 }
 
 //---------------------------------------------- 
@@ -170,7 +175,7 @@ int test_alm(int rtc){
 void reset_alm(int rtc){
   uint8_t   reg_buf[PCF8563_REGS];
 
-  /* start register */
+  /* set start register */
   reg_buf[0] = 0x01;
   /* control register 2 */
   reg_buf[1] = B8(00000000);
@@ -186,19 +191,21 @@ void reset_alm(int rtc){
 
 //---------------------------------------------- 
 // set minite alarm to one minite intervals
-void set_alm(int rtc){
+void init_alm(int rtc){
   uint8_t   reg_buf[PCF8563_REGS];
 
-  /* start register */
+  /* select minute alarm register */
   reg_buf[0] = 0x09;
-  /* control register 2 */
+  /* enable minute alarm, set to 1 minute */
   reg_buf[1] = ALM_REG_MIN;
 
-  /* the buffer to the PCF8563 */
+  /* write the buffer to the PCF8563 */
   if(write(rtc,reg_buf,2) != 2){
-      printf("Failed to write to the i2c bus.\n");
+    printf("Failed to write to the i2c bus.\n");
     printf("\n\n");
   }
+
+
 
   return;
 }

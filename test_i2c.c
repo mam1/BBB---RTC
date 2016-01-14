@@ -38,8 +38,8 @@ int main(void) {
     //         tm.tm_hour,tm.tm_min,tm.tm_sec,tm.tm_mon,tm.tm_mday,tm.tm_year,tm.tm_wday);
     // }
 
-    set_alm(rtc);
-
+    init_alm(rtc);
+    reset_alm(rtc);
     while(1){
         if(test_alm(rtc)){
             reset_alm(rtc);
@@ -48,7 +48,7 @@ int main(void) {
                 tm.tm_hour,tm.tm_min,tm.tm_sec,tm.tm_mon,tm.tm_mday,tm.tm_year,tm.tm_wday);
        }
        printf("  .\n");
-       sleep(2);
+       sleep(10);
     }
 
 

@@ -20,10 +20,10 @@
 #define YEAR_REG            0x08
 
 // alarm registers write values
-#define ALM_REG_MIN			B8(10000001)	// minute alarm values reset to 00
-#define ALM_REG_HOUR		B8(10000000)	// hour alarm values reset to 00
-#define ALM_REG_DAY			B8(10000000)	// day alarm values reset to 00
-#define ALM_REG_WDAY		B8(10000000)	// week day alarm values reset to 00
+#define ALM_REG_MIN			B8(00000001)	// minute alarm enabled value to 1
+#define ALM_REG_HOUR		B8(10000000)	// hour alarm disabled values to 00
+#define ALM_REG_DAY			B8(10000000)	// day alarm disabled values to 00
+#define ALM_REG_WDAY		B8(10000000)	// week day disabled alarm values to 00
 
 // CLKOUT control register
 #define CLKOUT_REG			B8(00000000)	// CLKOUT outputs inhibited
