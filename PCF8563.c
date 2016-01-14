@@ -161,7 +161,7 @@ int test_alm(int rtc){
   else{
     printf("con reg 1 read <%02x>\n",reg_buf[0]);
     printf("con reg 1 read <%02x>\n",(reg_buf[0] & B8(00001000)));
-    if(reg_buf[0] & B8(00001000)){
+    if(reg_buf[0]){ // & B8(00001000)
 
       return 1;
     }
