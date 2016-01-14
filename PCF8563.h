@@ -20,7 +20,7 @@
 #define YEAR_REG            0x08
 
 // alarm registers write values
-#define ALM_REG_MIN			B8(10000000)	// minute alarm values reset to 00
+#define ALM_REG_MIN			B8(10000001)	// minute alarm values reset to 00
 #define ALM_REG_HOUR		B8(10000000)	// hour alarm values reset to 00
 #define ALM_REG_DAY			B8(10000000)	// day alarm values reset to 00
 #define ALM_REG_WDAY		B8(10000000)	// week day alarm values reset to 00
@@ -59,3 +59,6 @@ typedef struct {
 int open_tm(char *filename, uint8_t addr);
 int get_tm(int, _tm *);
 int set_tm(int, _tm *);
+int test_alm(int);
+void reset_alm(int);
+void set_alm(int);

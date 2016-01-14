@@ -111,12 +111,10 @@ int get_tm(int rtc, _tm *tm){
     tm->tm_year = bcd2bin(reg_buf[6]) + 2000;
   }
   return 0;
-
-  return 0;
 }
 
 //---------------------------------------------- 
-// This function loads the values in the date structure
+// load the values in the date structure
 // into the PCF8563.  
 
 int set_tm(int rtc,_tm *tm){
@@ -140,3 +138,68 @@ int set_tm(int rtc,_tm *tm){
 
   return 0;
 }
+
+//---------------------------------------------- 
+// test the minute alarm flag
+int test_alm(int rtc){
+  uint8_t   reg_buf[PCF8563_REGS];
+
+  // select register to start read
+  reg_buf[0] = 0x01;
+  if (write(rtc,reg_buf,1) != 1) {
+    /* ERROR HANDLING: i2c transaction failed */
+    printf("Failed to write to the i2c bus.\n");
+    printf("\n\n");
+  }
+  // read registers
+  if (read(rtc,reg_buf,1) != 1) {
+    /* ERROR HANDLING: i2c transaction failed */
+    printf("Failed to read from the i2c bus: %s.\n", strerror(errno));
+    printf("\n\n");
+    return 0;
+    } 
+  else 
+    if(reg_buf[0] & B8(00001000))
+      return 1;
+    else
+      return 0;
+}
+
+//---------------------------------------------- 
+// clear the minute alarm flag
+void reset_alm(int rtc){
+  uint8_t   reg_buf[PCF8563_REGS];
+
+  /* start register */
+  reg_buf[0] = 0x01;
+  /* control register 2 */
+  reg_buf[1] = B8(00000000);
+
+  /* the buffer to the PCF8563 */
+  if(write(rtc,reg_buf,2) != 2){
+      printf("Failed to write to the i2c bus.\n");
+    printf("\n\n");
+  }
+
+  return;
+}
+
+//---------------------------------------------- 
+// set minite alarm to one minite intervals
+void set_alm(int rtc){
+  uint8_t   reg_buf[PCF8563_REGS];
+
+  /* start register */
+  reg_buf[0] = 0x09;
+  /* control register 2 */
+  reg_buf[1] = ALM_REG_MIN;
+
+  /* the buffer to the PCF8563 */
+  if(write(rtc,reg_buf,2) != 2){
+      printf("Failed to write to the i2c bus.\n");
+    printf("\n\n");
+  }
+
+  return;
+}
+
