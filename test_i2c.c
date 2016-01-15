@@ -38,18 +38,26 @@ int main(void) {
     //         tm.tm_hour,tm.tm_min,tm.tm_sec,tm.tm_mon,tm.tm_mday,tm.tm_year,tm.tm_wday);
     // }
 
+    // init_alm(rtc);
+    // reset_alm(rtc);
+    // while(1){
+    //     if(test_alm(rtc)){
+    //         reset_alm(rtc);
+    //         get_tm(rtc,&tm);
+    //         printf("\n  %02i:%02i:%02i  %02i/%02i/%02i  dow %i\n",
+    //             tm.tm_hour,tm.tm_min,tm.tm_sec,tm.tm_mon,tm.tm_mday,tm.tm_year,tm.tm_wday);
+    //    }
+    //    printf("  .");
+    //    sleep(1);
+    // }
+
     init_alm(rtc);
     reset_alm(rtc);
     while(1){
-        if(test_alm(rtc)){
-            reset_alm(rtc);
-            get_tm(rtc,&tm);
-            printf("  %02i:%02i:%02i  %02i/%02i/%02i  dow %i\n",
-                tm.tm_hour,tm.tm_min,tm.tm_sec,tm.tm_mon,tm.tm_mday,tm.tm_year,tm.tm_wday);
-       }
-       printf("  .\n");
-       sleep(10);
+        test_alm(rtc);
+        sleep(1);
     }
+
 
 
     close(rtc);

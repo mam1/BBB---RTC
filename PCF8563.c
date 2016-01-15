@@ -159,8 +159,8 @@ int test_alm(int rtc){
     return 0;
     } 
   else{
-    printf("con reg 1 read <%02x>\n",reg_buf[0]);
-    printf("con reg 1 read <%02x>\n",(reg_buf[0] & B8(00001000)));
+    printf(" <%02x>\n",reg_buf[0]);
+    // printf("con reg 1 read <%02x>\n",(reg_buf[0] & B8(00001000)));
     if(reg_buf[0]){ // & B8(00001000)
 
       return 1;
@@ -171,14 +171,14 @@ int test_alm(int rtc){
 }
 
 //---------------------------------------------- 
-// clear the minute alarm flag
+// enable and clear minute alarm flag
 void reset_alm(int rtc){
   uint8_t   reg_buf[PCF8563_REGS];
 
   /* set start register */
   reg_buf[0] = 0x01;
   /* control register 2 */
-  reg_buf[1] = B8(00000000);
+  reg_buf[1] = B8(00000100);
 
   /* the buffer to the PCF8563 */
   if(write(rtc,reg_buf,2) != 2){

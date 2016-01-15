@@ -8,7 +8,7 @@
 
 // control registers write values
 #define CNT_REG_1			B8(00000000)	// control/status1, no test modes or POR override
-#define CNT_REG_2			B8(00000000)	// control/status2, no alarm/timer flags and interrupts
+#define CNT_REG_2			B8(00000010)	// control/status2, no alarm/timer flags and interrupts
 
 // time and date register addresses
 #define SEC_REG             0x02
@@ -61,4 +61,4 @@ int get_tm(int, _tm *);
 int set_tm(int, _tm *);
 int test_alm(int);
 void reset_alm(int);
-void set_alm(int);
+void init_alm(int);
